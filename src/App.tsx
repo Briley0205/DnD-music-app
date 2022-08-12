@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Player from "./Components/Player";
+//import music1 from './music/ミツキヨ - YU.ME.NO .mp3'
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,7 +22,7 @@ const Boards = styled.div`
   width: 100%;
   gap: 10px;
 `;
-const Player = styled.div`
+const Board = styled.div`
   width: 380px;
   border-radius: 8px;
   min-height: 592px;
@@ -32,10 +34,50 @@ const Player = styled.div`
 `;
 
 function App() {
+  const [songs, setSongs] = useState([
+    {
+      title: "ミツキヨ - YU.ME.NO",
+      artist: "Mitsukiyo",
+      src: "./music/ミツキヨ - YU.ME.NO.mp3"
+    }, {
+      title: "ミツキヨ - ユノのアトリエ",
+      artist: "Mitsukiyo",
+      src: "./music/ミツキヨ - ユノのアトリエ.mp3"
+    }, {
+      title: "ミツキヨ - ユメの喫茶店",
+      artist: "Mitsukiyo",
+      src: "./music/ミツキヨ - ユメの喫茶店.mp3"
+    }, {
+      title: "ミツキヨ - ようこそトロイメへ",
+      artist: "Mitsukiyo",
+      src: "./music/ミツキヨ - ようこそトロイメへ.mp3"
+    }, {
+      title: "ミツキヨ - 日差しの中のティータイム.mp3",
+      artist: "Mitsukiyo",
+      src: "./music/ミツキヨ - 日差しの中のティータイム.mp3"
+    },
+  ]);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
+  useEffect(() => {
+    setNextSongIndex(() => {
+      if(currentSongIndex + 1 > songs.length - 1) {
+        return 0;
+      }
+      return currentSongIndex + 1;
+    });
+  }, [currentSongIndex]);
   return (
     <Wrapper>
       <Boards>
-        <Player></Player>
+        <Board>
+          <Player 
+          songIndex={currentSongIndex} 
+          setCurrentIndex={setCurrentSongIndex}
+          nextSongIndex={nextSongIndex}
+          songs={songs}
+          />
+        </Board>
         {/* <Board></Board> */}
       </Boards>
     </Wrapper>
