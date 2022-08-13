@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import DragCard from "./Components/DragCard";
 import Player from "./Components/Player";
-//import music1 from './music/ミツキヨ - YU.ME.NO .mp3'
+import { Droppable } from "react-beautiful-dnd";
 
 const Wrapper = styled.div`
   display: flex;
@@ -31,6 +32,17 @@ const Board = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+`;
+const DropArea = styled.div<IDropAreaProps>`
+  background-color: ${(props) =>
+    props.isDraggingOver
+      ? "#dfe6e9"
+      : props.draggingFromThis
+      ? "#b2bec3"
+      : "transparent"};
+  flex-grow: 1;
+  transition: background-color 0.2s ease-in-out;
+  padding: 20px;
 `;
 
 function App() {
@@ -71,6 +83,11 @@ function App() {
     <Wrapper>
       <Boards>
         <Board>
+          <Droppable>
+          {songs.map(({title, artist}, index) => (
+            <DragCard key={title} index={index} title={title} artist={artist}/>
+          ))}
+          </Droppable>
           <Player 
           songIndex={currentSongIndex} 
           setCurrentIndex={setCurrentSongIndex}

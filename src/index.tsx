@@ -6,6 +6,8 @@ import { ThemeProvider } from "styled-components";
 import { lightTheme } from "./theme";
 import { createGlobalStyle } from "styled-components";
 
+import { RecoilRoot } from "recoil";
+
 const GlobalStyle = createGlobalStyle`
   *{
     caret-color: transparent;
@@ -72,10 +74,12 @@ a {
 
 ReactDOM.render(
   <>
-    <ThemeProvider theme={lightTheme}>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <RecoilRoot>
+      <ThemeProvider theme={lightTheme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
+    </RecoilRoot>
   </>,
   document.getElementById("root")
 );
