@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DragCard from "./Components/DragCard";
 import Player from "./Components/Player";
-import { Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,6 +33,10 @@ const Board = styled.div`
   flex-direction: column;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
 `;
+interface IDropAreaProps {
+  draggingFromThis: boolean;
+  isDraggingOver: boolean;
+}
 const DropArea = styled.div<IDropAreaProps>`
   background-color: ${(props) =>
     props.isDraggingOver
@@ -79,15 +83,33 @@ function App() {
       return currentSongIndex + 1;
     });
   }, [currentSongIndex]);
+  const onDragEnd = () => {}
   return (
+    <DragDropContext onDragEnd={onDragEnd}>
     <Wrapper>
       <Boards>
         <Board>
-          <Droppable>
-          {songs.map(({title, artist}, index) => (
-            <DragCard key={title} index={index} title={title} artist={artist}/>
-          ))}
-          </Droppable>
+        <Droppable droppableId="music">
+          {(provided, snapshot) => (
+            <DropArea
+            isDraggingOver={snapshot.isDraggingOver}
+            draggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {songs.map((options, index) => (
+              <DragCard
+                key={options.title}
+                title={options.title}
+                index={index}
+                artist={options.artist}
+              ></DragCard>
+            ))}
+            {provided.placeholder}
+          </DropArea>
+          )}
+        </Droppable>
+
           <Player 
           songIndex={currentSongIndex} 
           setCurrentIndex={setCurrentSongIndex}
@@ -98,6 +120,7 @@ function App() {
         {/* <Board></Board> */}
       </Boards>
     </Wrapper>
+    </DragDropContext>
   );
 }
 
