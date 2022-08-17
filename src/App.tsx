@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DragCard from "./Components/DragCard";
 import Player from "./Components/Player";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { MusicState } from "./atoms";
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,51 +30,24 @@ const Board = styled.div`
   border-radius: 8px;
   min-height: 592px;
   height: 100%;
-  background-color: white;
+  background: linear-gradient(rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 100%);
   display: flex;
   flex-direction: column;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 `;
 interface IDropAreaProps {
   draggingFromThis: boolean;
   isDraggingOver: boolean;
 }
 const DropArea = styled.div<IDropAreaProps>`
-  background-color: ${(props) =>
-    props.isDraggingOver
-      ? "#dfe6e9"
-      : props.draggingFromThis
-      ? "#b2bec3"
-      : "transparent"};
   flex-grow: 1;
   transition: background-color 0.2s ease-in-out;
   padding: 20px;
 `;
 
 function App() {
-  const [songs, setSongs] = useState([
-    {
-      title: "ミツキヨ - YU.ME.NO",
-      artist: "Mitsukiyo",
-      src: "./music/ミツキヨ - YU.ME.NO.mp3"
-    }, {
-      title: "ミツキヨ - ユノのアトリエ",
-      artist: "Mitsukiyo",
-      src: "./music/ミツキヨ - ユノのアトリエ.mp3"
-    }, {
-      title: "ミツキヨ - ユメの喫茶店",
-      artist: "Mitsukiyo",
-      src: "./music/ミツキヨ - ユメの喫茶店.mp3"
-    }, {
-      title: "ミツキヨ - ようこそトロイメへ",
-      artist: "Mitsukiyo",
-      src: "./music/ミツキヨ - ようこそトロイメへ.mp3"
-    }, {
-      title: "ミツキヨ - 日差しの中のティータイム.mp3",
-      artist: "Mitsukiyo",
-      src: "./music/ミツキヨ - 日差しの中のティータイム.mp3"
-    },
-  ]);
+  const [songs, setSongs] = useRecoilState(MusicState);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
   useEffect(() => {
@@ -83,7 +58,17 @@ function App() {
       return currentSongIndex + 1;
     });
   }, [currentSongIndex]);
-  const onDragEnd = () => {}
+  const onDragEnd = (info: DropResult) => {
+    const {destination, source} = info;
+    setSongs((allSongs) => {
+      const songsCopy = [...allSongs];
+      const songCopy = allSongs[source.index];
+      songsCopy.splice(source.index, 1);
+      //@ts-ignore
+      songsCopy.splice(destination?.index, 0, songCopy);
+      return songsCopy
+    })
+  }
   return (
     <DragDropContext onDragEnd={onDragEnd}>
     <Wrapper>
