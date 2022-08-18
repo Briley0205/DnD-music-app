@@ -30,7 +30,10 @@ const Board = styled.div`
   border-radius: 8px;
   min-height: 592px;
   height: 100%;
-  background: linear-gradient(rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
   display: flex;
   flex-direction: column;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
@@ -52,59 +55,59 @@ function App() {
   const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
   useEffect(() => {
     setNextSongIndex(() => {
-      if(currentSongIndex + 1 > songs.length - 1) {
+      if (currentSongIndex + 1 > songs.length - 1) {
         return 0;
       }
       return currentSongIndex + 1;
     });
   }, [currentSongIndex]);
   const onDragEnd = (info: DropResult) => {
-    const {destination, source} = info;
+    const { destination, source } = info;
     setSongs((allSongs) => {
       const songsCopy = [...allSongs];
       const songCopy = allSongs[source.index];
       songsCopy.splice(source.index, 1);
       //@ts-ignore
       songsCopy.splice(destination?.index, 0, songCopy);
-      return songsCopy
-    })
-  }
+      return songsCopy;
+    });
+  };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-    <Wrapper>
-      <Boards>
-        <Board>
-        <Droppable droppableId="music">
-          {(provided, snapshot) => (
-            <DropArea
-            isDraggingOver={snapshot.isDraggingOver}
-            draggingFromThis={Boolean(snapshot.draggingFromThisWith)}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {songs.map((options, index) => (
-              <DragCard
-                key={options.title}
-                title={options.title}
-                index={index}
-                artist={options.artist}
-              ></DragCard>
-            ))}
-            {provided.placeholder}
-          </DropArea>
-          )}
-        </Droppable>
+      <Wrapper>
+        <Boards>
+          <Board>
+            <Droppable droppableId="music">
+              {(provided, snapshot) => (
+                <DropArea
+                  isDraggingOver={snapshot.isDraggingOver}
+                  draggingFromThis={Boolean(snapshot.draggingFromThisWith)}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {songs.map((options, index) => (
+                    <DragCard
+                      key={options.title}
+                      title={options.title}
+                      index={index}
+                      artist={options.artist}
+                    ></DragCard>
+                  ))}
+                  {provided.placeholder}
+                </DropArea>
+              )}
+            </Droppable>
 
-          <Player 
-          songIndex={currentSongIndex} 
-          setCurrentIndex={setCurrentSongIndex}
-          nextSongIndex={nextSongIndex}
-          songs={songs}
-          />
-        </Board>
-        {/* <Board></Board> */}
-      </Boards>
-    </Wrapper>
+            <Player
+              songIndex={currentSongIndex}
+              setCurrentIndex={setCurrentSongIndex}
+              nextSongIndex={nextSongIndex}
+              songs={songs}
+            />
+          </Board>
+          {/* <Board></Board> */}
+        </Boards>
+      </Wrapper>
     </DragDropContext>
   );
 }
